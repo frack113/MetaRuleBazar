@@ -17,3 +17,6 @@ A simple POC on Sigma Meta Rules
 - pysigma -> a pipeline to generate all the query in one file
 - splunk -> the [splunk](splunk/splunk.md) output `sigma convert -t splunk -p pysigma\splunk-savedsearches-concat.yml meta_rules > splunk\splunk.md`
 
+# disclaimer
+
+This repo is not link to SigmaHQ, it is my personnal "works"

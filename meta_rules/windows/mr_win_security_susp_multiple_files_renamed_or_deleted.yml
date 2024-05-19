@@ -1,0 +1,40 @@
+title: Meta Rule Suspicious Multiple File Rename Or Delete Occurred
+id: 2a11af6d-a41a-46fb-9e13-b3e265aaaf55
+correlation:
+    type: event_count
+    rules:
+        - 97919310-06a7-482c-9639-92b67ed63cf8
+    group-by:
+        - SubjectLogonId
+    timespan: 30s
+    condition:
+        gt: 10
+level: medium
+---
+title: Suspicious Multiple File Rename Or Delete Occurred
+id: 97919310-06a7-482c-9639-92b67ed63cf8
+status: unsupported
+description: Detects multiple file rename or delete events occurrence within a specified period of time by a same user (these events may signalize about ransomware activity).
+references:
+    - https://www.manageengine.com/data-security/how-to/how-to-detect-ransomware-attacks.html
+author: Vasiliy Burov, oscd.community
+date: 2020/10/16
+modified: 2023/02/24
+tags:
+    - attack.impact
+    - attack.t1486
+logsource:
+    product: windows
+    service: security
+    definition: 'Requirements: Audit Policy : Policies/Windows Settings/Security Settings/Local Policies/Audit Policy/Audit object access, Policies/Windows Settings/Security Settings/Advanced Audit Policy Configuration/Object Access'
+detection:
+    selection:
+        EventID: 4663
+        ObjectType: 'File'
+        AccessList: '%%1537'
+        Keywords: '0x8020000000000000'
+    condition: selection
+falsepositives:
+    - Software uninstallation
+    - Files restore activities
+level: medium

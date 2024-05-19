@@ -1,0 +1,9 @@
+postprocessing:
+- type: template
+  template: |+
+    [{{ rule.source }}]
+
+    search = {{ query }} | eval rule="{{ rule.id }}", title="{{ rule.title }}" | collect index=notable_events
+    description = {{ rule.description }}
+finalizers:
+- type: concat

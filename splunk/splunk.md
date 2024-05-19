@@ -259,6 +259,268 @@ description = Detects possible exploitation activity or bugs in a web applicatio
 
 | search event_count > 10
 
+[meta_rules\windows\mr_dns_query_win_possible_dns_rebinding.yml]
+search = QueryName="*" QueryStatus="0" QueryResults IN ("(::ffff:)*10.*", "(::ffff:)*192.168.*", "(::ffff:)*172.16.*", "(::ffff:)*172.17.*", "(::ffff:)*172.18.*", "(::ffff:)*172.19.*", "(::ffff:)*172.20.*", "(::ffff:)*172.21.*", "(::ffff:)*172.22.*", "(::ffff:)*172.23.*", "(::ffff:)*172.24.*", "(::ffff:)*172.25.*", "(::ffff:)*172.26.*", "(::ffff:)*172.27.*", "(::ffff:)*172.28.*", "(::ffff:)*172.29.*", "(::ffff:)*172.30.*", "(::ffff:)*172.31.*", "(::ffff:)*127.*") QueryName="*" QueryStatus="0" NOT (QueryResults IN ("(::ffff:)*10.*", "(::ffff:)*192.168.*", "(::ffff:)*172.16.*", "(::ffff:)*172.17.*", "(::ffff:)*172.18.*", "(::ffff:)*172.19.*", "(::ffff:)*172.20.*", "(::ffff:)*172.21.*", "(::ffff:)*172.22.*", "(::ffff:)*172.23.*", "(::ffff:)*172.24.*", "(::ffff:)*172.25.*", "(::ffff:)*172.26.*", "(::ffff:)*172.27.*", "(::ffff:)*172.28.*", "(::ffff:)*172.29.*", "(::ffff:)*172.30.*", "(::ffff:)*172.31.*", "(::ffff:)*127.*")) | eval rule="eb07e747-2552-44cd-af36-b659ae0958e4", title="Possible DNS Rebinding" | collect index=notable_events
+description = Detects several different DNS-answers by one domain with IPs from internal and external networks. Normally, DNS-answer contain TTL >100. (DNS-record will saved in host cache for a while TTL).
+
+| bin _time span=30s
+| stats dc(QueryName) as value_count by _time ComputerName
+
+| search value_count > 3
+
+[meta_rules\windows\mr_posh_ps_cl_invocation_lolscript_count.yml]
+search = ScriptBlockText IN ("*CL_Invocation.ps1*", "*SyncInvoke*") | eval rule="f588e69b-0750-46bb-8f87-0e9320d57536", title="Execution via CL_Invocation.ps1 (2 Lines)" | collect index=notable_events
+description = Detects Execution via SyncInvoke in CL_Invocation.ps1 module
+
+| bin _time span=1m
+| stats dc(ScriptBlockText) as value_count by _time Computer
+
+| search value_count > 2
+
+[meta_rules\windows\mr_posh_ps_cl_mutexverifiers_lolscript_count.yml]
+search = ScriptBlockText IN ("*CL_Mutexverifiers.ps1*", "*runAfterCancelProcess*") | eval rule="6609c444-9670-4eab-9636-fe4755a851ce", title="Execution via CL_Mutexverifiers.ps1 (2 Lines)" | collect index=notable_events
+description = Detects Execution via runAfterCancelProcess in CL_Mutexverifiers.ps1 module
+
+| bin _time span=10m
+| stats dc(ScriptBlockText) as value_count by _time Computer
+
+| search value_count > 2
+| multisearch
+[ search 
+[meta_rules\windows\mr_proc_creation_win_correlation_apt_silence_downloader_v3.yml]
+search = Image IN ("*\\tasklist.exe", "*\\qwinsta.exe", "*\\ipconfig.exe", "*\\hostname.exe") CommandLine="*>>*" CommandLine="*temps.dat" | table ComputerName,User,Image,CommandLine | eval rule="170901d1-de11-4de7-bccb-8fa13678d857", title="Silence.Downloader V3" | collect index=notable_events
+description = Detects Silence downloader. These commands are hardcoded into the binary. | eval event_type="170901d1-de11-4de7-bccb-8fa13678d857" ]
+[ search 
+[meta_rules\windows\mr_proc_creation_win_correlation_apt_silence_downloader_v3.yml]
+search = CommandLine="*/C REG ADD \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\" /v \"WinNetworkSecurity\" /t REG_SZ /d*" | table ComputerName,User,Image,CommandLine | eval rule="0af723a1-0222-4427-a07d-3be9bb8d12d7", title="Silence.Downloader V3" | collect index=notable_events
+description = Detects Silence downloader. These commands are hardcoded into the binary. | eval event_type="0af723a1-0222-4427-a07d-3be9bb8d12d7" ]
+
+| bin _time span=5m
+| stats dc(event_type) as event_type_count by _time computer
+
+| search event_type_count >= 2
+| multisearch
+[ search 
+[meta_rules\windows\mr_proc_creation_win_correlation_apt_turla_commands_medium.yml]
+search = CommandLine="net view /DOMAIN" | eval rule="75925535-ca97-4e0a-a850-00b5c00779dc", title="Automated Turla Group Lateral Movement" | collect index=notable_events
+description = Detects automated lateral movement by Turla group | eval event_type="75925535-ca97-4e0a-a850-00b5c00779dc" ]
+[ search 
+[meta_rules\windows\mr_proc_creation_win_correlation_apt_turla_commands_medium.yml]
+search = CommandLine="net session" | eval rule="ad03ed33-9323-41f4-be14-1827cd645a77", title="Automated Turla Group Lateral Movement" | collect index=notable_events
+description = Detects automated lateral movement by Turla group | eval event_type="ad03ed33-9323-41f4-be14-1827cd645a77" ]
+[ search 
+[meta_rules\windows\mr_proc_creation_win_correlation_apt_turla_commands_medium.yml]
+search = CommandLine="net share" | eval rule="73c3b7a0-d45e-4f48-875c-71114564a1a0", title="Automated Turla Group Lateral Movement" | collect index=notable_events
+description = Detects automated lateral movement by Turla group | eval event_type="73c3b7a0-d45e-4f48-875c-71114564a1a0" ]
+
+| bin _time span=1m
+| stats dc(event_type) as event_type_count by _time computer
+
+| search event_type_count >= 3
+
+[meta_rules\windows\mr_proc_creation_win_correlation_dnscat2_powershell_implementation.yml]
+search = ParentImage IN ("*\\powershell.exe", "*\\pwsh.exe") Image="*\\nslookup.exe" CommandLine="*\\nslookup.exe" | table Image,CommandLine,ParentImage | eval rule="b11d75d6-d7c1-11ea-87d0-0242ac130003", title="DNSCat2 Powershell Implementation Detection Via Process Creation" | collect index=notable_events
+description = The PowerShell implementation of DNSCat2 calls nslookup to craft queries. Counting nslookup processes spawned by PowerShell will show hundreds or thousands of instances if PS DNSCat2 is active locally.
+
+| bin _time span=1h
+| stats dc(Image) as value_count by _time ParentImage
+
+| search value_count > 100
+
+[meta_rules\windows\mr_proc_creation_win_correlation_multiple_susp_cli.yml]
+search = CommandLine IN ("*arp.exe*", "*at.exe*", "*attrib.exe*", "*cscript.exe*", "*dsquery.exe*", "*hostname.exe*", "*ipconfig.exe*", "*mimikatz.exe*", "*nbtstat.exe*", "*net.exe*", "*netsh.exe*", "*nslookup.exe*", "*ping.exe*", "*quser.exe*", "*qwinsta.exe*", "*reg.exe*", "*runas.exe*", "*sc.exe*", "*schtasks.exe*", "*ssh.exe*", "*systeminfo.exe*", "*taskkill.exe*", "*telnet.exe*", "*tracert.exe*", "*wscript.exe*", "*xcopy.exe*", "*pscp.exe*", "*copy.exe*", "*robocopy.exe*", "*certutil.exe*", "*vssadmin.exe*", "*powershell.exe*", "*pwsh.exe*", "*wevtutil.exe*", "*psexec.exe*", "*bcedit.exe*", "*wbadmin.exe*", "*icacls.exe*", "*diskpart.exe*") | eval rule="61ab5496-748e-4818-a92f-de78e20fe7f1", title="Quick Execution of a Series of Suspicious Commands" | collect index=notable_events
+description = Detects multiple suspicious process in a limited timeframe
+
+| bin _time span=5m
+| stats count as event_count by _time MachineName
+
+| search event_count > 5
+
+[meta_rules\windows\mr_proc_creation_win_correlation_susp_builtin_commands_recon.yml]
+search = CommandLine IN ("tasklist", "net time", "systeminfo", "whoami", "nbtstat", "net start", "qprocess", "nslookup", "hostname.exe", "netstat -an") OR CommandLine IN ("*\\net1 start", "*\\net1 user /domain", "*\\net1 group /domain", "*\\net1 group \"domain admins\" /domain", "*\\net1 group \"Exchange Trusted Subsystem\" /domain", "*\\net1 accounts /domain", "*\\net1 user net localgroup administrators") | eval rule="2887e914-ce96-435f-8105-593937e90757", title="Reconnaissance Activity Using BuiltIn Commands" | collect index=notable_events
+description = Detects execution of a set of builtin commands often used in recon stages by different attack groups
+
+| bin _time span=15s
+| stats count as event_count by _time CommandLine
+
+| search event_count > 4
+| multisearch
+[ search 
+[meta_rules\windows\mr_win_apt_apt29_tor.yml]
+search = EventID=7045 Provider_Name="Service Control Manager" ServiceName="Google Update" | eval rule="aac6bade-ac91-40b6-9336-4b79f4df7c97", title="APT29 Google Update Service Install" | collect index=notable_events
+description = This method detects malicious services mentioned in APT29 report by FireEye. The legitimate path for the Google update service is C:\Program Files (x86)\Google\Update\GoogleUpdate.exe so the service names and executable locations used by APT29 are specific enough to be detected in log files. | eval event_type="aac6bade-ac91-40b6-9336-4b79f4df7c97" ]
+[ search 
+[meta_rules\windows\mr_win_apt_apt29_tor.yml]
+search = Image IN ("C:\\Program Files(x86)\\Google\\GoogleService.exe", "C:\\Program Files(x86)\\Google\\GoogleUpdate.exe") | table ComputerName,User,CommandLine | eval rule="c069f460-2b87-4010-8dcf-e45bab362624", title="APT29 Google Update Service Install" | collect index=notable_events
+description = None | eval event_type="c069f460-2b87-4010-8dcf-e45bab362624" ]
+
+| bin _time span=5m
+| stats dc(event_type) as event_type_count by _time computer
+
+| search event_type_count >= 2
+
+[meta_rules\windows\mr_win_security_global_catalog_enumeration.yml]
+search = EventID=5156 DestPort IN (3268, 3269) | eval rule="619b020f-0fd7-4f23-87db-3f51ef837a34", title="Enumeration via the Global Catalog" | collect index=notable_events
+description = Detects enumeration of the global catalog (that can be performed using BloodHound or others AD reconnaissance tools). Adjust Threshold according to domain width.
+
+| bin _time span=1h
+| stats count as event_count by _time SourceAddress
+
+| search event_count > 2000
+
+[meta_rules\windows\mr_win_security_rare_schtasks_creations.yml]
+search = EventID=4698 | eval rule="b0d77106-7bb0-41fe-bd94-d1752164d066", title="Rare Schtasks Creations" | collect index=notable_events
+description = Detects rare scheduled tasks creations that only appear a few times per time frame and could reveal password dumpers, backdoor installs or other types of malicious code
+
+| bin _time span=7d
+| stats count as event_count by _time TaskName
+
+| search event_count < 5
+
+[meta_rules\windows\mr_win_security_susp_failed_logons_explicit_credentials.yml]
+search = EventID=4648 NOT SubjectUserName="*$" | eval rule="196a29c2-e378-48d8-ba07-8a9e61f7fab9", title="Password Spraying via Explicit Credentials" | collect index=notable_events
+description = Detects a single user failing to authenticate to multiple users using explicit credentials.
+
+| bin _time span=1h
+| stats dc(TargetUserName) as value_count by _time SubjectUserName
+
+| search value_count > 10
+
+[meta_rules\windows\mr_win_security_susp_failed_logons_single_process.yml]
+search = EventID=4625 LogonType=2 NOT ProcessName="-" | eval rule="fe563ab6-ded4-4916-b49f-a3a8445fe280", title="Multiple Users Failing to Authenticate from Single Process" | collect index=notable_events
+description = Detects failed logins with multiple accounts from a single process on the system.
+
+| bin _time span=24h
+| stats dc(TargetUserName) as value_count by _time ProcessName
+
+| search value_count > 10
+
+[meta_rules\windows\mr_win_security_susp_failed_logons_single_source.yml]
+search = EventID IN (529, 4625) TargetUserName="*" WorkstationName="*" | eval rule="e98374a6-e2d9-4076-9b5c-11bdb2569995", title="Failed Logins with Different Accounts from Single Source System" | collect index=notable_events
+description = Detects suspicious failed logins with different user accounts from a single source system
+
+| bin _time span=24h
+| stats dc(TargetUserName) as value_count by _time WorkstationName
+
+| search value_count > 3
+
+[meta_rules\windows\mr_win_security_susp_failed_logons_single_source2.yml]
+search = EventID=4776 TargetUserName="*" Workstation="*" | eval rule="6309ffc4-8fa2-47cf-96b8-a2f72e58e538", title="Failed NTLM Logins with Different Accounts from Single Source System" | collect index=notable_events
+description = Detects suspicious failed logins with different user accounts from a single source system
+
+| bin _time span=24h
+| stats dc(TargetUserName) as value_count by _time "Workstation - Workstation"
+
+| search value_count > 10
+
+[meta_rules\windows\mr_win_security_susp_failed_logons_single_source_kerberos.yml]
+search = EventID=4771 Status="0x18" NOT TargetUserName="*$" | eval rule="5d1d946e-32e6-4d9a-a0dc-0ac022c7eb98", title="Valid Users Failing to Authenticate From Single Source Using Kerberos" | collect index=notable_events
+description = Detects multiple failed logins with multiple valid domain accounts from a single source system using the Kerberos protocol.
+
+| bin _time span=24h
+| stats dc(TargetUserName) as value_count by _time IpAddress
+
+| search value_count > 10
+
+[meta_rules\windows\mr_win_security_susp_failed_logons_single_source_kerberos2.yml]
+search = EventID=4768 Status="0x12" NOT TargetUserName="*$" | eval rule="4b6fe998-b69c-46d8-901b-13677c9fb663", title="Disabled Users Failing To Authenticate From Source Using Kerberos" | collect index=notable_events
+description = Detects failed logins with multiple disabled domain accounts from a single source system using the Kerberos protocol.
+
+| bin _time span=24h
+| stats dc(TargetUserName) as value_count by _time IpAddress
+
+| search value_count > 10
+
+[meta_rules\windows\mr_win_security_susp_failed_logons_single_source_kerberos3.yml]
+search = EventID=4768 Status="0x6" NOT TargetUserName="*$" | eval rule="bc93dfe6-8242-411e-a2dd-d16fa0cc8564", title="Invalid Users Failing To Authenticate From Source Using Kerberos" | collect index=notable_events
+description = Detects failed logins with multiple invalid domain accounts from a single source system using the Kerberos protocol.
+
+| bin _time span=24h
+| stats dc(TargetUserName) as value_count by _time IpAddress
+
+| search value_count > 10
+
+[meta_rules\windows\mr_win_security_susp_failed_logons_single_source_ntlm.yml]
+search = EventID=4776 Status="*0xC000006A" NOT TargetUserName="*$" | eval rule="f88bab7f-b1f4-41bb-bdb1-4b8af35b0470", title="Valid Users Failing to Authenticate from Single Source Using NTLM" | collect index=notable_events
+description = Detects failed logins with multiple valid domain accounts from a single source system using the NTLM protocol.
+
+| bin _time span=24h
+| stats dc(TargetUserName) as value_count by _time Workstation
+
+| search value_count > 10
+
+[meta_rules\windows\mr_win_security_susp_failed_logons_single_source_ntlm2.yml]
+search = EventID=4776 Status="*0xC0000064" NOT TargetUserName="*$" | eval rule="56d62ef8-3462-4890-9859-7b41e541f8d5", title="Invalid Users Failing To Authenticate From Single Source Using NTLM" | collect index=notable_events
+description = Detects failed logins with multiple invalid domain accounts from a single source system using the NTLM protocol.
+
+| bin _time span=24h
+| stats dc(TargetUserName) as value_count by _time Workstation
+
+| search value_count > 10
+
+[meta_rules\windows\mr_win_security_susp_failed_remote_logons_single_source.yml]
+search = EventID=4625 LogonType=3 NOT IpAddress="-" | eval rule="add2ef8d-dc91-4002-9e7e-f2702369f53a", title="Multiple Users Remotely Failing To Authenticate From Single Source" | collect index=notable_events
+description = Detects a source system failing to authenticate against a remote host with multiple users.
+
+| bin _time span=24h
+| stats dc(TargetUserName) as value_count by _time IpAddress
+
+| search value_count > 10
+
+[meta_rules\windows\mr_win_security_susp_multiple_files_renamed_or_deleted.yml]
+search = EventID=4663 ObjectType="File" AccessList="%%1537" Keywords="0x8020000000000000" | eval rule="97919310-06a7-482c-9639-92b67ed63cf8", title="Suspicious Multiple File Rename Or Delete Occurred" | collect index=notable_events
+description = Detects multiple file rename or delete events occurrence within a specified period of time by a same user (these events may signalize about ransomware activity).
+
+| bin _time span=30s
+| stats count as event_count by _time SubjectLogonId
+
+| search event_count > 10
+| multisearch
+[ search 
+[meta_rules\windows\mr_win_security_susp_samr_pwset.yml]
+search = EventID=4738 NOT PasswordLastSet!=* | eval rule="7818b381-5eb1-4641-bea5-ef9e4cfb5951", title="Possible Remote Password Change Through SAMR" | collect index=notable_events
+description = Detects a possible remote NTLM hash change through SAMR API SamiChangePasswordUser() or SamSetInformationUser().
+"Audit User Account Management" in "Advanced Audit Policy Configuration" has to be enabled in your local security policy / GPO to see this events.
+ | eval event_type="7818b381-5eb1-4641-bea5-ef9e4cfb5951" ]
+[ search 
+[meta_rules\windows\mr_win_security_susp_samr_pwset.yml]
+search = EventID=5145 RelativeTargetName="samr" | eval rule="1b432ca1-3604-404b-9029-35c81975f6c6", title="Possible Remote Password Change Through SAMR" | collect index=notable_events
+description = Detects a possible remote NTLM hash change through SAMR API SamiChangePasswordUser() or SamSetInformationUser().
+"Audit User Account Management" in "Advanced Audit Policy Configuration" has to be enabled in your local security policy / GPO to see this events.
+ | eval event_type="1b432ca1-3604-404b-9029-35c81975f6c6" ]
+
+| bin _time span=15s
+| stats dc(event_type) as event_type_count by _time computer
+
+| search event_type_count >= 2
+
+[meta_rules\windows\mr_win_susp_failed_hidden_share_mount.yml]
+search = EventID=31010 ShareName="*$" | table ShareName | eval rule="1c3be8c5-6171-41d3-b792-cab6f717fcdb", title="Failed Mounting of Hidden Share" | collect index=notable_events
+description = Detects repeated failed (outgoing) attempts to mount a hidden share
+
+| bin _time span=1m
+| stats count as event_count by _time Computer
+
+| search event_count > 10
+
+[meta_rules\windows\mr_win_system_rare_service_installs.yml]
+search = Provider_Name="Service Control Manager" EventID=7045 | eval rule="66bfef30-22a5-4fcd-ad44-8d81e60922ae", title="Rare Service Installations" | collect index=notable_events
+description = Detects rare service installs that only appear a few times per time frame and could reveal password dumpers, backdoor installs or other types of malicious services
+
+| bin _time span=7d
+| stats count as event_count by _time ServiceName
+
+| search event_count > 5
+
+[meta_rules\windows\mr_win_taskscheduler_rare_schtask_creation.yml]
+search = EventID=106 NOT TaskName="\\Microsoft\\Windows\\Windows Defender\\Windows Defender Scheduled Scan" | eval rule="b20f6158-9438-41be-83da-a5a16ac90c2b", title="Rare Scheduled Task Creations" | collect index=notable_events
+description = This rule detects rare scheduled task creations. Typically software gets installed on multiple systems and not only on a few. The aggregation and count function selects tasks with rare names.
+
+| bin _time span=7d
+| stats count as event_count by _time TaskName
+
+| search event_count > 5
+
 [meta_rules\zeek\zeek_dce_rpc_domain_user_enumeration.yml]
 search = operation IN ("LsarLookupNames3", "LsarLookupSids3", "SamrGetGroupsForUser", "SamrLookupIdsInDomain", "SamrLookupNamesInDomain", "SamrQuerySecurityObject", "SamrQueryInformationGroup") | eval rule="66a0bdc6-ee04-441a-9125-99d2eb547942", title="Domain User Enumeration Network Recon 01" | collect index=notable_events
 description = Domain user and group enumeration via network reconnaissance.

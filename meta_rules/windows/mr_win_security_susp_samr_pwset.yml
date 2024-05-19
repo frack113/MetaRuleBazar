@@ -1,0 +1,57 @@
+title: Meta Rule Possible Remote Password Change Through SAMR
+id: f136a764-c7af-437c-9a18-82091aa62bb1
+correlation:
+    type: temporal
+    rules:
+        - 7818b381-5eb1-4641-bea5-ef9e4cfb5951
+        - 1b432ca1-3604-404b-9029-35c81975f6c6
+    group-by:
+        - computer
+    timespan: 15s
+level: medium
+---
+title: Possible Remote Password Change Through SAMR
+id: 7818b381-5eb1-4641-bea5-ef9e4cfb5951
+status: unsupported
+description: |
+  Detects a possible remote NTLM hash change through SAMR API SamiChangePasswordUser() or SamSetInformationUser().
+  "Audit User Account Management" in "Advanced Audit Policy Configuration" has to be enabled in your local security policy / GPO to see this events.
+author: Dimitrios Slamaris
+date: 2017/06/09
+modified: 2023/02/24
+tags:
+    - attack.credential_access
+    - attack.t1212
+logsource:
+    product: windows
+    service: security
+detection:
+    passwordchanged:
+        EventID: 4738
+    passwordchanged_filter:
+        PasswordLastSet:
+    condition: passwordchanged and not passwordchanged_filter
+level: medium
+
+---
+title: Possible Remote Password Change Through SAMR
+id: 1b432ca1-3604-404b-9029-35c81975f6c6
+status: unsupported
+description: |
+    Detects a possible remote NTLM hash change through SAMR API SamiChangePasswordUser() or SamSetInformationUser().
+    "Audit User Account Management" in "Advanced Audit Policy Configuration" has to be enabled in your local security policy / GPO to see this events.
+author: Dimitrios Slamaris
+date: 2017/06/09
+modified: 2023/02/24
+tags:
+    - attack.credential_access
+    - attack.t1212
+logsource:
+    product: windows
+    service: security
+detection:
+    samrpipe:
+        EventID: 5145
+        RelativeTargetName: samr
+    condition: samrpipe
+level: medium

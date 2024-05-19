@@ -1,0 +1,99 @@
+title: Meta Rule Automated Turla Group Lateral Movement
+id: 2a4afc99-f7f4-4413-9b4f-5140025d63aa
+correlation:
+    type: temporal
+    rules:
+        - 75925535-ca97-4e0a-a850-00b5c00779dc
+        - ad03ed33-9323-41f4-be14-1827cd645a77
+        - 73c3b7a0-d45e-4f48-875c-71114564a1a0
+    group-by:
+        - computer
+    timespan: 1m
+level: medium
+---
+title: Automated Turla Group Lateral Movement
+id: 75925535-ca97-4e0a-a850-00b5c00779dc
+status: unsupported
+description: Detects automated lateral movement by Turla group
+references:
+    - https://securelist.com/the-epic-turla-operation/65545/
+author: Markus Neis
+date: 2017/11/07
+modified: 2023/02/24
+tags:
+    - attack.g0010
+    - attack.execution
+    - attack.t1059
+    - attack.lateral_movement
+    - attack.t1021.002
+    - attack.discovery
+    - attack.t1083
+    - attack.t1135
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    netCommand1:
+        CommandLine: 'net view /DOMAIN'
+    condition: netCommand1
+falsepositives:
+    - Unknown
+level: medium
+---
+title: Automated Turla Group Lateral Movement
+id: ad03ed33-9323-41f4-be14-1827cd645a77
+status: unsupported
+description: Detects automated lateral movement by Turla group
+references:
+    - https://securelist.com/the-epic-turla-operation/65545/
+author: Markus Neis
+date: 2017/11/07
+modified: 2023/02/24
+tags:
+    - attack.g0010
+    - attack.execution
+    - attack.t1059
+    - attack.lateral_movement
+    - attack.t1021.002
+    - attack.discovery
+    - attack.t1083
+    - attack.t1135
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    netCommand2:
+        CommandLine: 'net session'
+    condition: netCommand2
+falsepositives:
+    - Unknown
+level: medium
+---
+title: Automated Turla Group Lateral Movement
+id: 73c3b7a0-d45e-4f48-875c-71114564a1a0
+status: unsupported
+description: Detects automated lateral movement by Turla group
+references:
+    - https://securelist.com/the-epic-turla-operation/65545/
+author: Markus Neis
+date: 2017/11/07
+modified: 2023/02/24
+tags:
+    - attack.g0010
+    - attack.execution
+    - attack.t1059
+    - attack.lateral_movement
+    - attack.t1021.002
+    - attack.discovery
+    - attack.t1083
+    - attack.t1135
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    netCommand3:
+        CommandLine: 'net share'
+    condition: netCommand3
+falsepositives:
+    - Unknown
+level: medium

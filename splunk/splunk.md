@@ -240,3 +240,12 @@ description = Detects many authentication failures from one source to one destin
 | stats dc(category) as value_count by _time dst_ip
 
 | search value_count > 30
+
+[meta_rules\other\mr_modsec_mulitple_blocks.yml]
+search = "mod_security: Access denied" OR "ModSecurity: Access denied" OR "mod_security-message: Access denied" | eval rule="a06eea10-d932-4aa6-8ba9-186df72c8d23", title="Multiple Modsecurity Blocks" | collect index=notable_events
+description = Detects multiple blocks by the mod_security module (Web Application Firewall)
+
+| bin _time span=120m
+| stats count as event_count by _time host
+
+| search event_count > 6

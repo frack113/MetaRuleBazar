@@ -249,3 +249,24 @@ description = Detects multiple blocks by the mod_security module (Web Applicatio
 | stats count as event_count by _time host
 
 | search event_count > 6
+
+[meta_rules\web\web_multiple_susp_resp_codes_single_source.yml]
+search = "sc-status" IN (400, 401, 403, 500) | table client_ip,vhost,url,response | eval rule="6fdfc796-06b3-46e8-af08-58f3505318af", title="Multiple Suspicious Resp Codes Caused by Single Client" | collect index=notable_events
+description = Detects possible exploitation activity or bugs in a web application
+
+| bin _time span=10m
+| stats count as event_count by _time clientip
+
+| search event_count > 10
+
+[meta_rules\zeek\zeek_dce_rpc_domain_user_enumeration.yml]
+search = operation IN ("LsarLookupNames3", "LsarLookupSids3", "SamrGetGroupsForUser", "SamrLookupIdsInDomain", "SamrLookupNamesInDomain", "SamrQuerySecurityObject", "SamrQueryInformationGroup") | eval rule="66a0bdc6-ee04-441a-9125-99d2eb547942", title="Domain User Enumeration Network Recon 01" | collect index=notable_events
+description = Domain user and group enumeration via network reconnaissance.
+Seen in APT 29 and other common tactics and actors. Detects a set of RPC (remote procedure calls) used to enumerate a domain controller.
+The rule was created based off the datasets and hackathon from https://github.com/OTRF/detection-hackathon-apt29
+
+
+| bin _time span=30s
+| stats dc(operation) as value_count by _time src_ip
+
+| search value_count > 4

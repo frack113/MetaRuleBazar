@@ -1,0 +1,42 @@
+title: Meta Rule Potential Network Enumeration on AWS
+id: 8d958c34-a187-4b87-869f-84ff260253bb
+correlation:
+    type: event_count
+    rules:
+        - c3d53999-4b14-4ddd-9d9b-e618c366b54d
+    group-by:
+        - eventSource
+    timespan: 10m
+    condition:
+        gt: 5
+level: medium
+---
+title: Potential Network Enumeration on AWS
+id: c3d53999-4b14-4ddd-9d9b-e618c366b54d
+status: unsupported
+description: Detects network enumeration performed on AWS.
+references:
+    - https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/
+author: Janantha Marasinghe
+date: 2022/12/13
+modified: 2023/03/24
+tags:
+    - attack.discovery
+    - attack.t1016
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: 'ec2.amazonaws.com'
+        eventName:
+            - 'DescribeCarrierGateways'
+            - 'DescribeVpcEndpointConnectionNotifications'
+            - 'DescribeTransitGatewayMulticastDomains'
+            - 'DescribeClientVpnRoutes'
+            - 'DescribeDhcpOptions'
+            - 'GetTransitGatewayRouteTableAssociations'
+    condition: selection
+falsepositives:
+    - Unknown
+level: low

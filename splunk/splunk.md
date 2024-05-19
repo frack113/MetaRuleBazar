@@ -1,5 +1,5 @@
 
-[\meta_rules\cloud\mr_aws_ec2_download_userdata.yml]
+[meta_rules\cloud\mr_aws_ec2_download_userdata.yml]
 
 search = eventSource="ec2.amazonaws.com" requestParameters.attribute="userData" eventName="DescribeInstanceAttribute" | eval rule="26ff4080-194e-47e7-9889-ef7602efed0c", title="AWS EC2 Download Userdata" | collect index=notable_events
 description = Detects bulk downloading of User Data associated with AWS EC2 instances. Instance User Data may include installation scripts and hard-coded secrets for deployment.
@@ -9,7 +9,7 @@ description = Detects bulk downloading of User Data associated with AWS EC2 inst
 
 | search event_count > 10
 
-[\meta_rules\cloud\mr_aws_enum_backup.yml]
+[meta_rules\cloud\mr_aws_enum_backup.yml]
 
 search = eventSource="ec2.amazonaws.com" eventName IN ("GetPasswordData", "GetEbsEncryptionByDefault", "GetEbsDefaultKmsKeyId", "GetBucketReplication", "DescribeVolumes", "DescribeVolumesModifications", "DescribeSnapshotAttribute", "DescribeSnapshotTierStatus", "DescribeImages") | eval rule="76255e09-755e-4675-8b6b-dbce9842cd2a", title="Potential Backup Enumeration on AWS" | collect index=notable_events
 description = Detects potential enumeration activity targeting an AWS instance backups
@@ -19,7 +19,7 @@ description = Detects potential enumeration activity targeting an AWS instance b
 
 | search event_count > 5
 
-[\meta_rules\cloud\mr_aws_enum_listing.yml]
+[meta_rules\cloud\mr_aws_enum_listing.yml]
 
 search = eventName="list*" | table userIdentity.arn | eval rule="e9c14b23-47e2-4a8b-8a63-d36618e33d70", title="Account Enumeration on AWS" | collect index=notable_events
 description = Detects enumeration of accounts configuration via api call to list different instances and services within a short period of time.
@@ -29,7 +29,7 @@ description = Detects enumeration of accounts configuration via api call to list
 
 | search event_count > 50
 
-[\meta_rules\cloud\mr_aws_enum_network.yml]
+[meta_rules\cloud\mr_aws_enum_network.yml]
 
 search = eventSource="ec2.amazonaws.com" eventName IN ("DescribeCarrierGateways", "DescribeVpcEndpointConnectionNotifications", "DescribeTransitGatewayMulticastDomains", "DescribeClientVpnRoutes", "DescribeDhcpOptions", "GetTransitGatewayRouteTableAssociations") | eval rule="c3d53999-4b14-4ddd-9d9b-e618c366b54d", title="Potential Network Enumeration on AWS" | collect index=notable_events
 description = Detects network enumeration performed on AWS.
@@ -39,7 +39,7 @@ description = Detects network enumeration performed on AWS.
 
 | search event_count > 5
 
-[\meta_rules\cloud\mr_aws_enum_storage.yml]
+[meta_rules\cloud\mr_aws_enum_storage.yml]
 
 search = eventSource="s3.amazonaws.com" eventName IN ("ListBuckets", "GetBucketCors", "GetBucketInventoryConfiguration", "GetBucketPublicAccessBlock", "GetBucketMetricsConfiguration", "GetBucketPolicy", "GetBucketTagging") | eval rule="4723218f-2048-41f6-bcb0-417f2d784f61", title="Potential Storage Enumeration on AWS" | collect index=notable_events
 description = Detects potential enumeration activity targeting AWS storage
@@ -50,12 +50,12 @@ description = Detects potential enumeration activity targeting AWS storage
 | search event_count > 5
 | multisearch
 [ search 
-[\meta_rules\cloud\mr_aws_lambda_function_created_or_invoked.yml]
+[meta_rules\cloud\mr_aws_lambda_function_created_or_invoked.yml]
 
 search = eventSource="lambda.amazonaws.com" eventName="CreateFunction" | eval rule="d914951b-52c8-485f-875e-86abab710c0b", title="AWS Lambda Function Created" | collect index=notable_events
 description = Detects when an user creates or invokes a lambda function. | eval event_type="d914951b-52c8-485f-875e-86abab710c0b" ]
 [ search 
-[\meta_rules\cloud\mr_aws_lambda_function_created_or_invoked.yml]
+[meta_rules\cloud\mr_aws_lambda_function_created_or_invoked.yml]
 
 search = eventSource="lambda.amazonaws.com" eventName="Invoke" | eval rule="53baf6c8-e3a2-4769-8378-f20df75f550d", title="AWS Lambda Function Invoked" | collect index=notable_events
 description = Detects when an user creates or invokes a lambda function. | eval event_type="53baf6c8-e3a2-4769-8378-f20df75f550d" ]
@@ -65,7 +65,7 @@ description = Detects when an user creates or invokes a lambda function. | eval 
 
 | search event_type_count >= 2
 
-[\meta_rules\cloud\mr_aws_macic_evasion.yml]
+[meta_rules\cloud\mr_aws_macic_evasion.yml]
 
 search = eventName IN ("ArchiveFindings", "CreateFindingsFilter", "DeleteMember", "DisassociateFromMasterAccount", "DisassociateMember", "DisableMacie", "DisableOrganizationAdminAccount", "UpdateFindingsFilter", "UpdateMacieSession", "UpdateMemberSession", "UpdateClassificationJob") | eval rule="91f6a16c-ef71-437a-99ac-0b070e3ad221", title="AWS Macie Evasion" | collect index=notable_events
 description = Detects evade to Macie detection.
@@ -76,12 +76,12 @@ description = Detects evade to Macie detection.
 | search event_count > 5
 | multisearch
 [ search 
-[\meta_rules\cloud\mr_aws_ses_messaging_enabled.yml]
+[meta_rules\cloud\mr_aws_ses_messaging_enabled.yml]
 
 search = eventSource="ses.amazonaws.com" eventName="UpdateAccountSendingEnabled" | eval rule="60b84424-a724-4502-bd0d-cc676e1bc90e", title="Potential AWS Cloud Email Service Abuse" | collect index=notable_events
 description = Detects when the email sending feature is enabled for an AWS account and the email address verification request is dispatched in quick succession | eval event_type="60b84424-a724-4502-bd0d-cc676e1bc90e" ]
 [ search 
-[\meta_rules\cloud\mr_aws_ses_messaging_enabled.yml]
+[meta_rules\cloud\mr_aws_ses_messaging_enabled.yml]
 
 search = eventSource="ses.amazonaws.com" eventName="VerifyEmailIdentity" | eval rule="aa3e4183-c864-4bde-a46f-2bf178fd1080", title="Potential AWS Cloud Email Service Abuse" | collect index=notable_events
 description = Detects when the email sending feature is enabled for an AWS account and the email address verification request is dispatched in quick succession | eval event_type="aa3e4183-c864-4bde-a46f-2bf178fd1080" ]
@@ -91,7 +91,7 @@ description = Detects when the email sending feature is enabled for an AWS accou
 
 | search event_type_count >= 2
 
-[\meta_rules\cloud\mr_azure_aad_secops_signin_failure_bad_password_threshold.yml]
+[meta_rules\cloud\mr_azure_aad_secops_signin_failure_bad_password_threshold.yml]
 
 search = ResultType=50126 ResultDescription="Invalid username or password or Invalid on-premises username or password." NOT TargetUserName="*$" | eval rule="dff74231-dbed-42ab-ba49-83289be2ac3a", title="Sign-in Failure Bad Password Threshold" | collect index=notable_events
 description = Define a baseline threshold and then monitor and adjust to suit your organizational behaviors and limit false alerts from being generated.
@@ -101,7 +101,85 @@ description = Define a baseline threshold and then monitor and adjust to suit yo
 
 | search value_count > 10
 
-[\meta_rules\other\mr_generic_brute_force.yml]
+[meta_rules\linux\mr_lnx_auditd_cve_2021_3156_sudo_buffer_overflow.yml]
+
+search = type="EXECVE" a0="/usr/bin/sudoedit" a1="-s" OR a2="-s" OR a3="-s" OR a4="-s" a1="\\" OR a2="\\" OR a3="\\" OR a4="\\" | eval rule="5ee37487-4eb8-4ac2-9be1-d7d14cdc559f", title="CVE-2021-3156 Exploitation Attempt" | collect index=notable_events
+description = Detects exploitation attempt of vulnerability described in CVE-2021-3156.
+Alternative approach might be to look for flooding of auditd logs due to bruteforcing
+required to trigger the heap-based buffer overflow.
+
+
+| bin _time span=24h
+| stats count as event_count by _time host
+
+| search event_count > 50
+
+[meta_rules\linux\mr_lnx_auditd_cve_2021_3156_sudo_buffer_overflow_brutforce.yml]
+
+search = type="SYSCALL" exe="/usr/bin/sudoedit" | eval rule="b9748c98-9ea7-4fdb-80b6-29bed6ba71d2", title="CVE-2021-3156 Exploitation Attempt Bruteforcing" | collect index=notable_events
+description = Detects exploitation attempt of vulnerability described in CVE-2021-3156.
+Alternative approach might be to look for flooding of auditd logs due to bruteforcing.
+required to trigger the heap-based buffer overflow.
+
+
+| bin _time span=24h
+| stats count as event_count by _time host
+
+| search event_count > 50
+| multisearch
+[ search 
+[meta_rules\linux\mr_lnx_auditd_cve_2021_4034.yml]
+
+search = type="PROCTITLE" proctitle="(null)" | eval rule="40a016ab-4f48-4eee-adde-bbf612695c53", title="Potential CVE-2021-4034 Exploitation Attempt" | collect index=notable_events
+description = Detects exploitation attempt of the vulnerability described in CVE-2021-4034. | eval event_type="40a016ab-4f48-4eee-adde-bbf612695c53" ]
+[ search 
+[meta_rules\linux\mr_lnx_auditd_cve_2021_4034.yml]
+
+search = type="SYSCALL" comm="pkexec" exe="/usr/bin/pkexec" | eval rule="3f4efb10-b8e0-4253-9cbb-32d4b2ef53d0", title="Potential CVE-2021-4034 Exploitation Attempt" | collect index=notable_events
+description = Detects exploitation attempt of the vulnerability described in CVE-2021-4034. | eval event_type="3f4efb10-b8e0-4253-9cbb-32d4b2ef53d0" ]
+
+| bin _time span=1m
+| stats dc(event_type) as event_type_count by _time computer
+
+| search event_type_count >= 2
+| multisearch
+[ search 
+[meta_rules\linux\mr_lnx_auditd_debugfs_usage.yml]
+
+search = type="EXECVE" a0="debugfs" | eval rule="fb0647d7-371a-4553-8e20-33bbbe122956", title="Use of Debugfs to Access a Raw Disk" | collect index=notable_events
+description = Detects access to a raw disk on a host to evade detection by security products. | eval event_type="fb0647d7-371a-4553-8e20-33bbbe122956" ]
+[ search 
+[meta_rules\linux\mr_lnx_auditd_debugfs_usage.yml]
+
+search = type="EXECVE" a0 IN ("df", "lsblk", "pvs", "fdisk", "blkid", "parted", "hwinfo", "inxi") | eval rule="e33e10c1-e376-4dc5-906b-f37c0814d96b", title="Use of Debugfs to Access a Raw Disk" | collect index=notable_events
+description = Detects access to a raw disk on a host to evade detection by security products. | eval event_type="e33e10c1-e376-4dc5-906b-f37c0814d96b" ]
+
+| bin _time span=5m
+| stats dc(event_type) as event_type_count by _time computer
+
+| search event_type_count >= 2
+
+[meta_rules\linux\mr_lnx_auth_susp_failed_logons_single_source.yml]
+
+search = pam_message="authentication failure" pam_user="*" pam_rhost="*" | eval rule="fc947f8e-ea81-4b14-9a7b-13f888f94e18", title="Failed Logins with Different Accounts from Single Source - Linux" | collect index=notable_events
+description = Detects suspicious failed logins with different user accounts from a single source system
+
+| bin _time span=24h
+| stats dc(pam_user) as value_count by _time pam_rhost
+
+| search value_count > 3
+
+[meta_rules\linux\mr_lnx_shell_priv_esc_prep.yml]
+
+search = "cat /etc/issue" OR "cat /etc/*-release" OR "cat /proc/version" OR "uname -a" OR "uname -mrs" OR "rpm -q kernel" OR "dmesg | grep Linux" OR "ls /boot | grep vmlinuz-" OR "cat /etc/profile" OR "cat /etc/bashrc" OR "cat ~/.bash_profile" OR "cat ~/.bashrc" OR "cat ~/.bash_logout" OR "ps -aux | grep root" OR "ps -ef | grep root" OR "crontab -l" OR "cat /etc/cron*" OR "cat /etc/cron.allow" OR "cat /etc/cron.deny" OR "cat /etc/crontab" OR "grep -i user *" OR "grep -i pass *" OR "ifconfig" OR "cat /etc/network/interfaces" OR "cat /etc/sysconfig/network" OR "cat /etc/resolv.conf" OR "cat /etc/networks" OR "iptables -L" OR "ip6tables -L" OR "lsof -i" OR "netstat -antup" OR "netstat -antpx" OR "netstat -tulpn" OR "arp -e" OR "route" OR "cat /etc/passwd" OR "cat /etc/group" OR "cat /etc/shadow" OR "find / -perm -u=s" OR "find / -perm -g=s" OR "find / -perm -4000" OR "find / -perm -2000" OR "find / -perm -o+w" | eval rule="444ade84-c362-4260-b1f3-e45e20e1a905", title="Privilege Escalation Preparation" | collect index=notable_events
+description = Detects suspicious shell commands indicating the information gathering phase as preparation for the Privilege Escalation.
+
+| bin _time span=30m
+| stats count as event_count by _time host
+
+| search event_count > 6
+
+[meta_rules\other\mr_generic_brute_force.yml]
 
 search = action="failure" | table src_ip,dst_ip,user | eval rule="53c7cca0-2901-493a-95db-d00d6fcf0a37", title="Brute Force" | collect index=notable_events
 description = Detects many authentication failures from one source to one destination which is may indicate Brute Force activity

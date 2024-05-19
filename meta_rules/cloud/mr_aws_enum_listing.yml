@@ -1,0 +1,35 @@
+title: Meta Rule Account Enumeration on AWS
+id: 74f013a7-3fd9-4687-a485-eb2daf630808
+correlation:
+    type: event_count
+    rules:
+        - e9c14b23-47e2-4a8b-8a63-d36618e33d70
+    group-by:
+        - eventSource
+    timespan: 10m
+    condition:
+        gt: 50
+level: medium
+---
+title: Account Enumeration on AWS
+id: e9c14b23-47e2-4a8b-8a63-d36618e33d70
+status: unsupported
+description: Detects enumeration of accounts configuration via api call to list different instances and services within a short period of time.
+author: toffeebr33k
+date: 2020/11/21
+modified: 2023/03/24
+tags:
+    - attack.discovery
+    - attack.t1592
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection_eventname:
+        eventName: list*
+    condition: selection_eventname
+fields:
+    - userIdentity.arn
+falsepositives:
+    - AWS Config or other configuration scanning activities
+level: low

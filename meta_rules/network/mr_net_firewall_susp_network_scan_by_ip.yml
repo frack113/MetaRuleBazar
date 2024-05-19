@@ -1,0 +1,38 @@
+title: Meta Rule Network Scans Count By Destination IP
+id: 65ef9590-ef75-4e8b-900a-04eff5b0831e
+correlation:
+    type: value_count
+    rules:
+        - 4601eaec-6b45-4052-ad32-2d96d26ce0d8
+    group-by:
+        - src_ip
+    timespan: 24h
+    condition:
+        field: dst_ip
+        gt: 10
+level: medium
+---
+title: Network Scans Count By Destination IP
+id: 4601eaec-6b45-4052-ad32-2d96d26ce0d8
+status: unsupported
+description: Detects many failed connection attempts to different ports or hosts
+author: Thomas Patzke
+date: 2017/02/19
+modified: 2023/03/24
+tags:
+    - attack.discovery
+    - attack.t1046
+logsource:
+    category: firewall
+detection:
+    selection:
+        action: denied
+    condition: selection
+fields:
+    - src_ip
+    - dst_ip
+    - dst_port
+falsepositives:
+    - Inventarization systems
+    - Vulnerability scans
+level: medium

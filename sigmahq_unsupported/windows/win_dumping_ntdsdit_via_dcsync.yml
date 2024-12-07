@@ -2,14 +2,14 @@ title: Dumping ntds.dit remotely via DCSync
 id: 51238c62-2b29-4539-ad75-e94575368a12
 description: ntds.dit retrieving using synchronisation with legitimate domain controller using Directory Replication Service Remote Protocol
 author: Teymur Kheirkhabarov, oscd.community
-date: 2019/10/24
-modified: 2019/11/13
+date: 2019-10-24
+modified: 2019-11-13
 references:
     - https://twitter.com/gentilkiwi/status/1003236624925413376
     - https://gist.github.com/gentilkiwi/dcc132457408cf11ad2061340dcb53c2
     - https://www.slideshare.net/heirhabarov/hunting-for-credentials-dumping-in-windows-environment
 tags:
-    - attack.credential_access
+    - attack.credential-access
     - attack.t1003
 logsource:
     product: windows
@@ -31,4 +31,4 @@ detection:
 falsepositives:
     - Legitimate administrator adding new domain controller to already existing domain
 level: medium
-status: unsupported
+status: experimental

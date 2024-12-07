@@ -1,10 +1,10 @@
 title: Account Enumeration on AWS
 id: e9c14b23-47e2-4a8b-8a63-d36618e33d70
-status: unsupported
+status: experimental
 description: Detects enumeration of accounts configuration via api call to list different instances and services within a short period of time.
 author: toffeebr33k
-date: 2020/11/21
-modified: 2023/03/24
+date: 2020-11-21
+modified: 2023-03-24
 tags:
     - attack.discovery
     - attack.t1592

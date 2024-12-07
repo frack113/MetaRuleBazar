@@ -4,10 +4,10 @@ related:
     - id: 175997c5-803c-4b08-8bb0-70b099f47595
       type: derived  
 description: Detects Obfuscated Powershell via COMPRESS OBFUSCATION
-status: unsupported
+status: experimental
 author: Timur Zinniatullin, oscd.community
-date: 2020/10/18
-modified: 2023/03/04
+date: 2020-10-18
+modified: 2023-03-04
 references:
     - https://github.com/SigmaHQ/sigma/issues/1009 #(Task 19)
 logsource:
@@ -27,7 +27,7 @@ falsepositives:
     - Unknown
 level: medium
 tags:
-    - attack.defense_evasion
+    - attack.defense-evasion
     - attack.t1027
     - attack.execution
     - attack.t1059.001

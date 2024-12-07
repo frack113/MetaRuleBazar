@@ -4,10 +4,10 @@ related:
     - id: 11b52f18-aaec-4d60-9143-5dd8cc4706b9
       type: derived
 description: Detects Obfuscated Powershell via RUNDLL LAUNCHER
-status: unsupported
+status: experimental
 author: Timur Zinniatullin, oscd.community
-date: 2020/10/18
-modified: 2022/03/08
+date: 2020-10-18
+modified: 2022-03-08
 references:
     - https://github.com/SigmaHQ/sigma/issues/1009 #(Task 23)
 logsource:
@@ -25,7 +25,7 @@ falsepositives:
     - Unknown
 level: medium
 tags:
-    - attack.defense_evasion
+    - attack.defense-evasion
     - attack.t1027
     - attack.execution
     - attack.t1059.001

@@ -9,10 +9,10 @@ tags:
     - attack.g0016
     - attack.t1050          # an old one
     - attack.t1543.003
-date: 2017/11/01
-modified: 2022/03/21
+date: 2017-11-01
+modified: 2022-03-21
 author: Thomas Patzke
-status: unsupported
+status: experimental
 logsource:
     product: windows
     service: system

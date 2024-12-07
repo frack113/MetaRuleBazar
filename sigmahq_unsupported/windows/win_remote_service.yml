@@ -1,14 +1,14 @@
 action: global
 title: Remote Service Creation
 id: 4a3a2b96-d7fc-4cb9-80e4-4a545fe95f46
-status: unsupported
+status: experimental
 description: Detects remote execution via service creation on the destination host
 author: Jai Minton, oscd.community
-date: 2020/10/05
+date: 2020-10-05
 references:
     - https://drive.google.com/file/d/1lKya3_mLnR3UQuCoiYruO3qgu052_iS_/view
 tags:
-    - attack.lateral_movement
+    - attack.lateral-movement
     - attack.persistence
     - attack.execution
     - attack.t1543.003 

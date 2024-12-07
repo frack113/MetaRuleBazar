@@ -3,16 +3,16 @@ id: d585ab5a-6a69-49a8-96e8-4a726a54de46
 related:
     - id: 843544a7-56e0-4dcc-a44f-5cc266dd97d6
       type: derived
-status: unsupported
+status: experimental
 description: Detects the use of getsystem Meterpreter/Cobalt Strike command by detecting a specific service installation
 references:
     - https://speakerdeck.com/heirhabarov/hunting-for-privilege-escalation-in-windows-environment
     - https://blog.cobaltstrike.com/2014/04/02/what-happens-when-i-type-getsystem/
 author: Teymur Kheirkhabarov, Ecco, Florian Roth
-date: 2019/10/26
-modified: 2022/12/22
+date: 2019-10-26
+modified: 2022-12-22
 tags:
-    - attack.privilege_escalation
+    - attack.privilege-escalation
     - attack.t1134.001
     - attack.t1134.002
 logsource:

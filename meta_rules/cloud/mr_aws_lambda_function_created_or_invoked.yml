@@ -1,4 +1,4 @@
-title: Meta Rule Potential Storage Enumeration on AWS
+title: Meta Rule Lamdba Fonction on AWS
 id: 345f61f8-caec-439b-a9d2-1684ca777ce2
 correlation:
     type: temporal
@@ -12,15 +12,15 @@ level: low
 ---
 title: AWS Lambda Function Created
 id: d914951b-52c8-485f-875e-86abab710c0b
-status: unsupported
+status: experimental
 description: Detects when an user creates or invokes a lambda function.
 references:
     - https://rhinosecuritylabs.com/aws/aws-privilege-escalation-methods-mitigation/
 author: Austin Songer @austinsonger
-date: 2021/10/03
-modified: 2023/03/24
+date: 2021-10-03
+modified: 2023-03-24
 tags:
-    - attack.privilege_escalation
+    - attack.privilege-escalation
     - attack.t1078
 logsource:
     product: aws
@@ -37,15 +37,15 @@ level: low
 ---
 title: AWS Lambda Function Invoked
 id: 53baf6c8-e3a2-4769-8378-f20df75f550d
-status: unsupported
+status: experimental
 description: Detects when an user creates or invokes a lambda function.
 references:
     - https://rhinosecuritylabs.com/aws/aws-privilege-escalation-methods-mitigation/
 author: Austin Songer @austinsonger
-date: 2021/10/03
-modified: 2023/03/24
+date: 2021-10-03
+modified: 2023-03-24
 tags:
-    - attack.privilege_escalation
+    - attack.privilege-escalation
     - attack.t1078
 logsource:
     product: aws

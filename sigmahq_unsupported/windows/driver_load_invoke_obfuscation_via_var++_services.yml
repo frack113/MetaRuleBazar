@@ -4,14 +4,14 @@ related:
     - id: 14bcba49-a428-42d9-b943-e2ce0f0f7ae6
       type: derived
 description: Detects Obfuscated Powershell via VAR++ LAUNCHER
-status: unsupported
+status: experimental
 author: Timur Zinniatullin, oscd.community
-date: 2020/10/13
-modified: 2021/09/18
+date: 2020-10-13
+modified: 2021-09-18
 references:
     - https://github.com/SigmaHQ/sigma/issues/1009 #(Task27)
 tags:
-    - attack.defense_evasion
+    - attack.defense-evasion
     - attack.t1027
     - attack.execution
     - attack.t1059.001

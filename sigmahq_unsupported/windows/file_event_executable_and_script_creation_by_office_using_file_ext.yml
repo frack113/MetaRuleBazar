@@ -10,10 +10,10 @@ tags:
     - attack.t1047
     - attack.t1218.010
     - attack.execution
-    - attack.defense_evasion
+    - attack.defense-evasion
 status: experimental
-date: 2021/08/23
-modified: 2022/06/02
+date: 2021-08-23
+modified: 2022-06-02
 logsource:
     product: windows
     category: file_event
